@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+reminders.json
+schedules.json  # kalau tidak ingin push jadwal asli
+
+# Virtual env
+venv/
+env/
+.venv/
+
+# Editor
+.vscode/
+.idea/

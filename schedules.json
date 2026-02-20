@@ -1,0 +1,29 @@
+{
+  "global_daily_reminders": [
+    {
+      "time_utc": "01:00:00",
+      "message": "Good morning! Time to take your medicine 💊",
+      "repeat": "daily",
+      "active": true
+    },
+    {
+      "time_utc": "03:00:00",
+      "message": "Time to drink some water – stay hydrated! 💧",
+      "repeat": "daily",
+      "active": true
+    },
+    {
+      "time_utc": "06:00:00",
+      "message": "It's time for lunch – eat something nutritious 🍲",
+      "repeat": "daily",
+      "active": true
+    },
+    {
+      "time_utc": "12:00:00",
+      "message": "Dinner time! Don't forget to eat well 😊",
+      "repeat": "daily",
+      "active": true
+    }
+  ],
+  "notes": "Times are in UTC (HH:MM:SS). Adjust according to your UTC offset (e.g. UTC+7 for WIB)."
+}

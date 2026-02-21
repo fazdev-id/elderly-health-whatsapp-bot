@@ -90,11 +90,11 @@ Built for portfolio demonstration (simulated client: India, focus on elderly hea
 
 ## Demo
 
-**[Watch the demo video here](https://youtu.be/YOUR_VIDEO_LINK_HERE)**  
-(Replace with your unlisted YouTube link)
+(Video Demo Coming Soon)
 
 ### Screenshots
-(Add 3–5 screenshots of WhatsApp chat + terminal logs here)
+
+(Screenshots coming soon)
 
 ## Limitations & Future Ideas
 

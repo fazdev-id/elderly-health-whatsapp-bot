@@ -188,11 +188,25 @@ def whatsapp_webhook():
     lower_msg = incoming_msg.lower()
 
     # Emergency detection
-    emergency_keywords = ["emergency", "help", "urgent", "pain", "chest pain", "can't breathe", "darurat", "tolong", "sakit dada"]
+    emergency_keywords = ["emergency", "help", "urgent", "pain", "chest pain", "can't breathe"]
     if any(word in lower_msg for word in emergency_keywords):
         alert_text = f"!!! EMERGENCY ALERT !!!\nFrom: {profile_name} ({from_number})\nMessage: {incoming_msg}"
         send_whatsapp_message(EMERGENCY_CONTACT, alert_text)
+        
+        # Automated follow-up every 3 minutes for 1 hour
+        scheduler.add_job(
+            send_followup,
+            'interval',
+            minutes=3,
+            args=[from_number],
+            id=f"followup_{from_number}",
+            start_date=datetime.now(timezone.utc) + timedelta(minutes=3),
+            end_date=datetime.now(timezone.utc) + timedelta(hours=1),  # max 1 hour of follow-ups
+            replace_existing=True # make sure to replace if user sends another emergency message
+        )
+        
         response_text = "I've sent an urgent message to your emergency contact. Please stay calm. ❤️"
+        response_text += "\nI'll check on you every 3 minutes. Just reply 'OK' or tell me how you're feeling."
 
     else:
         try:

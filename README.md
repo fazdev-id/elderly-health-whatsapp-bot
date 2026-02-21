@@ -98,9 +98,11 @@ Built for portfolio demonstration (simulated client: India, focus on elderly hea
 
 ## Limitations & Future Ideas
 
-- Custom reminders are in-memory (lost on restart) → can add JSON/SQLite persistence
+- Custom reminder now save in reminder.json → can upgrade to SQLite persistence
 - Daily reminders sent only to emergency contact → can extend to all known users
 - No user authentication or multi-timezone support yet
+- No history chat yet, it can be an user analyze user behavior (medical purpose), and make a  simple memory for chatbot
+
 
 ## License
 

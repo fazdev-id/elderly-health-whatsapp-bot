@@ -67,8 +67,13 @@ def load_user_reminders_from_file():
                 for user_number, reminders in data.items():
                     user_reminders[user_number] = []
                     for rem in reminders:
+                        # Ensure loaded datetime is timezone-aware (UTC)
+                        dt = datetime.fromisoformat(rem["time"])
+                        if dt.tzinfo is None:
+                            dt = dt.replace(tzinfo=timezone.utc)
+                            
                         user_reminders[user_number].append({
-                            "time": datetime.fromisoformat(rem["time"]),
+                            "time": dt,
                             "message": rem["message"]
                         })
             print(f"Loaded existing reminders from {REMAINDER_FILE}")
@@ -82,8 +87,9 @@ def save_user_reminders_to_file():
         for user_number, reminders in user_reminders.items():
             data_to_save[user_number] = []
             for rem in reminders:
+                # Ensure time is saved as an explicit UTC ISO string
                 data_to_save[user_number].append({
-                    "time": rem["time"].isoformat(),
+                    "time": rem["time"].astimezone(timezone.utc).isoformat(),
                     "message": rem["message"]
                 })
         with open(REMAINDER_FILE, 'w') as f:
@@ -148,6 +154,10 @@ def send_whatsapp_message(to_number, body):
     except Exception as e:
         print(f"Failed to send to {to_number}: {e}")
 
+def send_followup(to_number):
+    """Helper function for emergency follow-up messages"""
+    send_whatsapp_message(to_number, "Are you okay? Please reply if you can. ❤️")
+
 def check_and_send_reminders():
     """Check due custom reminders and update remainder.json if sent"""
     now_utc = datetime.now(timezone.utc)
@@ -155,6 +165,7 @@ def check_and_send_reminders():
     for user_number, reminders in list(user_reminders.items()):
         remaining = []
         for rem in reminders:
+            # Compare using timezone-aware UTC objects
             if rem["time"] <= now_utc:
                 send_whatsapp_message(user_number, rem["message"])
                 changed = True
@@ -245,9 +256,14 @@ def whatsapp_webhook():
                 if time_str and re.match(r"^\d{2}:\d{2}$", time_str):
                     try:
                         hour, minute = map(int, time_str.split(":"))
-                        remind_utc = now_utc.replace(hour=hour, minute=minute, second=0, microsecond=0)
-                        remind_utc -= timedelta(hours=UTC_OFFSET_HOURS)
+                        
+                        # 1. Calculate the requested time in user's local time
+                        remind_local = current_user_time.replace(hour=hour, minute=minute, second=0, microsecond=0)
+                        
+                        # 2. Convert that local time back to UTC by subtracting the offset
+                        remind_utc = remind_local - timedelta(hours=UTC_OFFSET_HOURS)
 
+                        # 3. If the calculated UTC time is already in the past, schedule for tomorrow
                         if remind_utc < now_utc:
                             remind_utc += timedelta(days=1)
 
